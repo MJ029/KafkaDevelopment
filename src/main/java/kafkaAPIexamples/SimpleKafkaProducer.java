@@ -1,7 +1,9 @@
 package kafkaAPIexamples;
 
+import kafka.common.KafkaException;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.Properties;
@@ -11,7 +13,7 @@ public class SimpleKafkaProducer {
     private static final String topic = "SimpleKafkaProducerExample";
 
     // Run methods to trigger the Job
-    private static void run(){
+    private static void run() {
         Properties props = new Properties();
         props.put("bootstrap.servers", "localhost:9092");
         props.put("acks", "all");
@@ -25,6 +27,7 @@ public class SimpleKafkaProducer {
         Producer<String, String> producer = new KafkaProducer<>(props);
         for (int i=0; i<=100; i++){
             producer.send(new ProducerRecord<>(topic, Integer.toString(i), Integer.toString(i)));
+            System.out.printf("record %s Inserted to Topic Successfully\n", i);
         }
         producer.close();
     }
@@ -34,7 +37,7 @@ public class SimpleKafkaProducer {
         SimpleKafkaProducer producer = new SimpleKafkaProducer();
         try{
             producer.run(); //calling the Run method to Execute the Code
-        } catch (Exception e){
+        } catch (KafkaException e){
             System.out.println(e.getMessage()); // Get the Exception and log in Screen.
         }
     }
