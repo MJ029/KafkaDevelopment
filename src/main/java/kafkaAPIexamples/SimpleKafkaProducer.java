@@ -1,10 +1,7 @@
 package kafkaAPIexamples;
 
 import kafka.common.KafkaException;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.*;
 
 import java.util.Properties;
 
@@ -23,12 +20,16 @@ public class SimpleKafkaProducer {
         props.put("buffer.memory", 33554432);
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-
         Producer<String, String> producer = new KafkaProducer<>(props);
-        for (int i=0; i<=100; i++){
-            producer.send(new ProducerRecord<>(topic, Integer.toString(i), Integer.toString(i)));
-            System.out.printf("record %s Inserted to Topic Successfully\n", i);
-        }
+        try {
+            for (int i = 0; i <= 100; i++) {
+                RecordMetadata rmData = producer.send(new ProducerRecord<>(topic, Integer.toString(i), Integer.toString(i))).get();
+                System.out.printf("record %s Inserted to Topic Successfully\n", i);
+                System.out.println("Partition No: " + rmData.partition() + " Offset Info: " + rmData.offset());
+            }
+        } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         producer.close();
     }
 
